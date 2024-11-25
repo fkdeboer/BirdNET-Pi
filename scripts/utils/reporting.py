@@ -161,25 +161,18 @@ def bird_weather(file: ParseFileName, detections: [Detection]):
         return
     if detections:
         # POST soundscape to server
-        soundscape_url = (f'https://app.birdweather.com/api/v1/stations/'
-                          f'{conf["BIRDWEATHER_ID"]}/soundscapes?timestamp={file.iso8601}')
-
-        with open(file.file_name, 'rb') as f:
-            wav_data = f.read()
-        gzip_wav_data = gzip.compress(wav_data)
-        try:
-            response = requests.post(url=soundscape_url, data=gzip_wav_data, timeout=30,
-                                     headers={'Content-Type': 'application/octet-stream', 'Content-Encoding': 'gzip'})
-            log.info("Soundscape POST Response Status - %d", response.status_code)
-            sdata = response.json()
-        except BaseException as e:
-            log.error("Cannot POST soundscape: %s", e)
-            return
-        if not sdata.get('success'):
-            log.error(sdata.get('message'))
-            return
-        soundscape_id = sdata['soundscape']['id']
-
+        # Always skip soundscape upload
+        should_skip_soundscape_upload = True
+                                                                                           
+        if should_skip_soundscape_upload:
+            # Skip soundscape upload                                                        
+            soundscape_uploaded = False
+            soundscape_id = 0
+        else:                                                                   
+            # POST soundscape to server
+            # (This code block will be skipped)
+            pass
+            
         for detection in detections:
             # POST detection to server
             detection_url = f'https://app.birdweather.com/api/v1/stations/{conf["BIRDWEATHER_ID"]}/detections'
