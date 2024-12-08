@@ -195,19 +195,23 @@ def bird_weather(file: ParseFileName, detections: [Detection]):
 def thingsboard(file: ParseFileName, detections: [Detection]):
     """Posts detections to a ThingsBoard server"""
     conf = get_settings()
-    if not conf.get("THINGSBOARD_ADDRESS"):
-        log.error("ThingsBoard address missing, please add THINGSBOARD_ADDRESS to the configuration")
+    if not conf["THINGSBOARD_ADDRESS"] == "":
+        log.warning(
+            "ThingsBoard address missing, please add THINGSBOARD_ADDRESS to the configuration"
+        )
         return
 
-    if not conf.get("THIGSBOARD_DEVICE_TOKEN"):
-        log.error("No device token configures, please add THIGSBOARD_DEVICE_TOKEN to the configuration")
+    if not conf["THIGSBOARD_DEVICE_TOKEN"] == "":
+        log.warning(
+            "No device token configures, please add THIGSBOARD_DEVICE_TOKEN to the configuration"
+        )
         return
 
     if detections:
         # Uploading soundscape files is not supported yet
         soundscape_id = 0
 
-        detection_url = f"{conf["THINGSBOARD_ADDRESS"]}/api/v1/{conf["THIGSBOARD_DEVICE_TOKEN"]}/telemetry"
+        detection_url = f"{conf['THINGSBOARD_ADDRESS']}/api/v1/{conf['THIGSBOARD_DEVICE_TOKEN']}/telemetry"
 
         for detection in detections:
             data = {
@@ -215,14 +219,18 @@ def thingsboard(file: ParseFileName, detections: [Detection]):
                 "values": {
                     "commonName": detection.common_name,
                     "scientificName": detection.scientific_name,
-                    "lat": conf['LATITUDE'],
-                    "lon": conf['LONGITUDE'],
+                    "lat": conf["LATITUDE"],
+                    "lon": conf["LONGITUDE"],
                     "confidence": detection.confidence,
                     "soundscapeId": soundscape_id,
                     "soundscapeStartTime": detection.start,
                     "soundscapeEndTime": detection.stop,
-                    "algorithm": '2p4' if conf['MODEL'] == 'BirdNET_GLOBAL_6K_V2.4_Model_FP16' else 'alpha',
-                }
+                    "algorithm": (
+                        "2p4"
+                        if conf["MODEL"] == "BirdNET_GLOBAL_6K_V2.4_Model_FP16"
+                        else "alpha"
+                    ),
+                },
             }
 
             log.debug(data)
