@@ -194,7 +194,7 @@ def bird_weather(file: ParseFileName, detections: [Detection]):
 
 def thingsboard(file: ParseFileName, detections: [Detection]):
     """Posts detections to a ThingsBoard server"""
-    conf = get_settings()
+    conf = get_settings(force_reload=True)
     if not conf["THINGSBOARD_ADDRESS"] == "":
         log.warning(
             "ThingsBoard address missing, please add THINGSBOARD_ADDRESS to the configuration"
