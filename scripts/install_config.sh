@@ -58,6 +58,13 @@ BIRDWEATHER_ID=
 #___________________user password for the Live Audio Stream,___________________#
 #_________________Tools, System Links, and the Processed files ________________#
 
+#----------------------------  ThingsBoard Information ------------------------#
+#_____________The variable below can be set to have your BirdNET-Pi____________#
+#______________________________connect to Thingsboard__________________________#
+
+THINGSBOARD_ADDRESS=
+THINGSBOARD_DEVICE_TOKEN=
+
 ## CADDY_PWD is the plaintext password (that will be hashed) and used to access
 ## certain parts of the web interface
 
