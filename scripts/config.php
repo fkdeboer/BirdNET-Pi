@@ -55,6 +55,8 @@ if(isset($_GET["latitude"])){
   $site_name = str_replace('"', "", $site_name);
   $site_name = str_replace('\'', "", $site_name);
   $birdweather_id = $_GET["birdweather_id"];
+  $thingsboard_device_token = $_GET["THINGSBOARD_DEVICE_TOKEN"]; // New Thingsboard ID
+  $thingsboard_address = $_GET["THINGSBOARD_ADDRESS"]; // New THINGSBOARD_ADDRESS
   $apprise_input = $_GET['apprise_input'];
   $apprise_notification_title = $_GET['apprise_notification_title'];
   $apprise_notification_body = $_GET['apprise_notification_body'];
@@ -152,6 +154,8 @@ if(isset($_GET["latitude"])){
   $contents = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents);
   $contents = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents);
   $contents = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents);
+  $contents = preg_replace("/THINGSBOARD_ADDRESS=.*/", "THINGSBOARD_ADDRESS=$thingsboard_address", $contents);
+  $contents = preg_replace("/THINGSBOARD_DEVICE_TOKEN=.*/", "THINGSBOARD_DEVICE_TOKEN=$thingsboard_device_token", $contents);
   $contents = preg_replace("/APPRISE_NOTIFICATION_TITLE=.*/", "APPRISE_NOTIFICATION_TITLE=\"$apprise_notification_title\"", $contents);
   $contents = preg_replace("/APPRISE_NOTIFICATION_BODY=.*/", "APPRISE_NOTIFICATION_BODY=\"$apprise_notification_body\"", $contents);
   $contents = preg_replace("/APPRISE_NOTIFY_EACH_DETECTION=.*/", "APPRISE_NOTIFY_EACH_DETECTION=$apprise_notify_each_detection", $contents);
@@ -490,6 +494,14 @@ function runProcess() {
         Make sure that the Latitude and Longitude match what is in your BirdNET-Pi configuration.
         <br><br>
         <dt>NOTE - by using your BirdWeather ID - you are consenting to sharing your soundscapes and detections with BirdWeather</dt></p>
+      </td></tr></table><br>
+	  <table class="settingstable"><tr><td>
+	  <h2>ThingsBoard</h2>
+      <label for="thingsboard_address">ThingsBoard Address: </label>
+      <input name="thingsboard_address" type="text" value="<?php echo htmlspecialchars($config['THINGSBOARD_ADDRESS'] ?? ''); ?>" /><br>
+      <label for="thingsboard_device_token">Device Token: </label>
+      <input name="thingsboard_device_token" type="text" value="<?php echo htmlspecialchars($config['THINGSBOARD_DEVICE_TOKEN'] ?? ''); ?>" /><br>
+         <p>Enter the ThingsBoard address and device token for integration with the system.</p>
       </td></tr></table><br>
       <table class="settingstable" style="width:100%"><tr><td>
       <h2>Notifications</h2>
