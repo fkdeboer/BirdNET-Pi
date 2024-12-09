@@ -201,9 +201,9 @@ def thingsboard(file: ParseFileName, detections: [Detection]):
         )
         return
 
-    if conf["THIGSBOARD_DEVICE_TOKEN"] == "":
+    if conf["THINGSBOARD_DEVICE_TOKEN"] == "":
         log.warning(
-            "No device token configures, please add THIGSBOARD_DEVICE_TOKEN to the configuration"
+            "No device token configures, please add THINGSBOARD_DEVICE_TOKEN to the configuration"
         )
         return
 
@@ -211,7 +211,7 @@ def thingsboard(file: ParseFileName, detections: [Detection]):
         # Uploading soundscape files is not supported yet
         soundscape_id = 0
 
-        detection_url = f"{conf['THINGSBOARD_ADDRESS']}/api/v1/{conf['THIGSBOARD_DEVICE_TOKEN']}/telemetry"
+        detection_url = f"{conf['THINGSBOARD_ADDRESS']}/api/v1/{conf['THINGSBOARD_DEVICE_TOKEN']}/telemetry"
 
         for detection in detections:
             data = {
