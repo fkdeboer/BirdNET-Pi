@@ -500,7 +500,7 @@ function runProcess() {
       <label for="thingsboard_address">ThingsBoard Address: </label>
       <input name="thingsboard_address" type="text" value="<?php echo htmlspecialchars($config['THINGSBOARD_ADDRESS'] ?? ''); ?>" /><br>
       <label for="thingsboard_device_token">Device Token: </label>
-      <input name="thingsboard_device_token" type="text" value="<?php echo htmlspecialchars($config['THINGSBOARD_DEVICE_TOKEN'] ?? ''); ?>" /><br>
+      <input name="thingsboard_device_token" type="text" value="<?php print($config['THINGSBOARD_DEVICE_TOKEN']);?>" /><br>
          <p>Enter the ThingsBoard address and device token for integration with the system.</p>
       </td></tr></table><br>
       <table class="settingstable" style="width:100%"><tr><td>
