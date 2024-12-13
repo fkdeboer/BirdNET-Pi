@@ -55,8 +55,8 @@ if(isset($_GET["latitude"])){
   $site_name = str_replace('"', "", $site_name);
   $site_name = str_replace('\'', "", $site_name);
   $birdweather_id = $_GET["birdweather_id"];
-  $thingsboard_device_token = $_GET["THINGSBOARD_DEVICE_TOKEN"]; // New Thingsboard ID
-  $thingsboard_address = $_GET["THINGSBOARD_ADDRESS"]; // New THINGSBOARD_ADDRESS
+  $thingsboard_device_token = $_GET["thingsboard_device_token"]; // New Thingsboard ID
+  $thingsboard_address = $_GET["thingsboard_address"]; // New THINGSBOARD_ADDRESS
   $apprise_input = $_GET['apprise_input'];
   $apprise_notification_title = $_GET['apprise_notification_title'];
   $apprise_notification_body = $_GET['apprise_notification_body'];
