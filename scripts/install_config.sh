@@ -53,6 +53,13 @@ DATA_MODEL_VERSION=1
 
 BIRDWEATHER_ID=
 
+#---------------------  Thingsboard Station Information -----------------------#
+#_____________Setting the below variables will enable reporting to_____________#
+#__________________________________Thingsboard_________________________________#
+
+THINGSBOARD_ADDRESS=https://data.folkertdeboerecology.nl
+THINGSBOARD_DEVICE_TOKEN=
+
 #-----------------------  Web Interface User Password  ------------------------#
 #____________________The variable below sets the 'birdnet'_____________________#
 #___________________user password for the Live Audio Stream,___________________#
