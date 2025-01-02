@@ -22,7 +22,7 @@ def test_luistervink(settings_mock, requests_mock):
     luistervink(file, [detection])
 
     requests_mock.post.assert_called_with(
-        "https://data.luistervink.nl/api/detections",
+        "https://data.luistervink.nl/api/detections/",
         json={
             "timestamp": "2024-12-07 18:34:26",
             "commonName": "Great tit",

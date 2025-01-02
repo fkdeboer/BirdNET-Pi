@@ -211,7 +211,7 @@ def luistervink(file: ParseFileName, detections: [Detection]):
         # Uploading soundscape files is not supported yet
         soundscape_id = 0
 
-        detection_url = f"{conf['LUISTERVINK_SERVER_ADDRESS']}/api/detections"
+        detection_url = f"{conf['LUISTERVINK_SERVER_ADDRESS']}/api/detections/"
         params = {"token": conf["LUISTERVINK_DEVICE_TOKEN"]}
 
         for detection in detections:
