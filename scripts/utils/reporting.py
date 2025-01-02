@@ -192,18 +192,18 @@ def bird_weather(file: ParseFileName, detections: [Detection]):
                 log.error("Cannot POST detection: %s", e)
 
 
-def thingsboard(file: ParseFileName, detections: [Detection]):
-    """Posts detections to a ThingsBoard server"""
-    conf = get_settings(force_reload=True)
-    if conf["THINGSBOARD_ADDRESS"] == "":
+def luistervink(file: ParseFileName, detections: [Detection]):
+    """Posts detections to a Luistervink server"""
+    conf = get_settings()
+    if conf["LUISTERVINK_SERVER_ADDRESS"] == "":
         log.warning(
-            "ThingsBoard address missing, please add THINGSBOARD_ADDRESS to the configuration"
+            "Luistervink address missing, please add LUISTERVINK_SERVER_ADDRESS to the configuration"
         )
         return
 
-    if conf["THINGSBOARD_DEVICE_TOKEN"] == "":
+    if conf["LUISTERVINK_DEVICE_TOKEN"] == "":
         log.warning(
-            "No device token configures, please add THINGSBOARD_DEVICE_TOKEN to the configuration"
+            "No device token configures, please add LUISTERVINK_DEVICE_TOKEN to the configuration"
         )
         return
 
@@ -211,31 +211,27 @@ def thingsboard(file: ParseFileName, detections: [Detection]):
         # Uploading soundscape files is not supported yet
         soundscape_id = 0
 
-        detection_url = f"{conf['THINGSBOARD_ADDRESS']}/api/v1/{conf['THINGSBOARD_DEVICE_TOKEN']}/telemetry"
+        detection_url = f"{conf['LUISTERVINK_SERVER_ADDRESS']}/api/detections"
+        params = {"token": conf["LUISTERVINK_DEVICE_TOKEN"]}
 
         for detection in detections:
             data = {
-                "ts": detection.datetime.timestamp() * 1000,  # unix timestamp in ms
-                "values": {
-                    "commonName": detection.common_name,
-                    "scientificName": detection.scientific_name,
-                    "lat": conf["LATITUDE"],
-                    "lon": conf["LONGITUDE"],
-                    "confidence": detection.confidence,
-                    "soundscapeId": soundscape_id,
-                    "soundscapeStartTime": detection.start,
-                    "soundscapeEndTime": detection.stop,
-                    "algorithm": (
-                        "2p4"
-                        if conf["MODEL"] == "BirdNET_GLOBAL_6K_V2.4_Model_FP16"
-                        else "alpha"
-                    ),
-                },
+                "timestamp": detection.datetime.strftime(format="%Y-%m-%d %H:%M:%S"),
+                "commonName": detection.common_name,
+                "scientificName": detection.scientific_name,
+                "lat": conf["LATITUDE"],
+                "lon": conf["LONGITUDE"],
+                "confidence": detection.confidence,
+                "soundscapeId": soundscape_id,
+                "soundscapeStartTime": detection.start,
+                "soundscapeEndTime": detection.stop,
             }
 
             log.debug(data)
             try:
-                response = requests.post(detection_url, json=data, timeout=20)
+                response = requests.post(
+                    detection_url, json=data, params=params, timeout=20
+                )
                 log.info("Detection POST Response Status - %d", response.status_code)
             except BaseException as e:
                 log.error("Cannot POST detection: %s", e)

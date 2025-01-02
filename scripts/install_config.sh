@@ -53,24 +53,12 @@ DATA_MODEL_VERSION=1
 
 BIRDWEATHER_ID=
 
-#---------------------  Thingsboard Station Information -----------------------#
+#---------------------  Luistervink Station Information -----------------------#
 #_____________Setting the below variables will enable reporting to_____________#
-#__________________________________Thingsboard_________________________________#
+#__________________________________Luistervink_________________________________#
 
-THINGSBOARD_ADDRESS=https://data.folkertdeboerecology.nl
-THINGSBOARD_DEVICE_TOKEN=
-
-#-----------------------  Web Interface User Password  ------------------------#
-#____________________The variable below sets the 'birdnet'_____________________#
-#___________________user password for the Live Audio Stream,___________________#
-#_________________Tools, System Links, and the Processed files ________________#
-
-#----------------------------  ThingsBoard Information ------------------------#
-#_____________The variable below can be set to have your BirdNET-Pi____________#
-#______________________________connect to Thingsboard__________________________#
-
-THINGSBOARD_ADDRESS=
-THINGSBOARD_DEVICE_TOKEN=
+LUISTERVINK_SERVER_ADDRESS=https://data.folkertdeboerecology.nl
+LUISTERVINK_DEVICE_TOKEN=
 
 ## CADDY_PWD is the plaintext password (that will be hashed) and used to access
 ## certain parts of the web interface

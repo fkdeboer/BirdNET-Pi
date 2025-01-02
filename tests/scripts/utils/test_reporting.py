@@ -1,4 +1,4 @@
-from scripts.utils.reporting import thingsboard
+from scripts.utils.reporting import luistervink
 from unittest.mock import patch
 from scripts.utils.helpers import ParseFileName, Detection
 from datetime import datetime as dt
@@ -6,10 +6,10 @@ from datetime import datetime as dt
 
 @patch("scripts.utils.reporting.requests")
 @patch("scripts.utils.reporting.get_settings")
-def test_thingsboard(settings_mock, requests_mock):
+def test_luistervink(settings_mock, requests_mock):
     settings_mock.return_value = {
-        "THINGSBOARD_ADDRESS": "https://thingsboard.org",
-        "THIGSBOARD_DEVICE_TOKEN": "token",
+        "LUISTERVINK_SERVER_ADDRESS": "https://data.luistervink.nl",
+        "LUISTERVINK_DEVICE_TOKEN": "token",
         "LATITUDE": 55.074,
         "LONGITUDE": 4.360,
         "MODEL": None,
@@ -19,23 +19,21 @@ def test_thingsboard(settings_mock, requests_mock):
         dt(2024, 12, 7, 18, 34, 21), 5, 8, "Parus major_Great tit", 0.789
     )
 
-    thingsboard(file, [detection])
+    luistervink(file, [detection])
 
     requests_mock.post.assert_called_with(
-        "https://thingsboard.org/api/v1/token/telemetry",
+        "https://data.luistervink.nl/api/detections",
         json={
-            "ts": 1733592866000.0,
-            "values": {
-                "commonName": "Great tit",
-                "scientificName": "Parus major",
-                "lat": 55.074,
-                "lon": 4.36,
-                "confidence": 0.789,
-                "soundscapeId": 0,
-                "soundscapeStartTime": 5.0,
-                "soundscapeEndTime": 8.0,
-                "algorithm": "alpha",
-            },
+            "timestamp": "2024-12-07 18:34:26",
+            "commonName": "Great tit",
+            "scientificName": "Parus major",
+            "lat": 55.074,
+            "lon": 4.36,
+            "confidence": 0.789,
+            "soundscapeId": 0,
+            "soundscapeStartTime": 5.0,
+            "soundscapeEndTime": 8.0,
         },
+        params={"token": "token"},
         timeout=20,
     )
