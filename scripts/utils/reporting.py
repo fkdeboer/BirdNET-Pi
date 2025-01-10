@@ -1,9 +1,14 @@
 import glob
+<<<<<<< HEAD
+=======
+import gzip
+>>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
 import json
 import logging
 import os
 import sqlite3
 import subprocess
+<<<<<<< HEAD
 import tempfile
 import io
 import soundfile
@@ -13,11 +18,28 @@ import requests
 from PIL import Image, ImageDraw, ImageFont
 
 from .helpers import get_settings, ParseFileName, Detection, get_font, DB_PATH
+=======
+from time import sleep
+
+import requests
+
+from .helpers import get_settings, ParseFileName, Detection, DB_PATH
+>>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
 from .notifications import sendAppriseNotifications
 
 log = logging.getLogger(__name__)
 
 
+<<<<<<< HEAD
+=======
+def get_safe_title(title):
+    result = subprocess.run(['iconv', '-f', 'utf8', '-t', 'ascii//TRANSLIT'],
+                            check=True, input=title.encode('utf-8'), capture_output=True)
+    ret = result.stdout.decode('utf-8')
+    return ret
+
+
+>>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
 def extract(in_file, out_file, start, stop):
     result = subprocess.run(['sox', '-V1', f'{in_file}', f'{out_file}', 'trim', f'={start}', f'={stop}'],
                             check=True, capture_output=True)
@@ -45,6 +67,7 @@ def extract_safe(in_file, out_file, start, stop):
     extract(in_file, out_file, safe_start, safe_stop)
 
 
+<<<<<<< HEAD
 def spectrogram(in_file, title, comment, raw=0):
     fd, tmp_file = tempfile.mkstemp(suffix='.png')
     os.close(fd)
@@ -52,11 +75,18 @@ def spectrogram(in_file, title, comment, raw=0):
             '-t', '', '-c', '', '-o', tmp_file]
     args += ['-r'] if int(raw) else []
 
+=======
+def spectrogram(in_file, title, comment, raw=False):
+    args = ['sox', '-V1', f'{in_file}', '-n', 'remix', '1', 'rate', '24k', 'spectrogram',
+            '-t', f'{get_safe_title(title)}', '-c', f'{comment}', '-o', f'{in_file}.png']
+    args += ['-r'] if raw else []
+>>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
     result = subprocess.run(args, check=True, capture_output=True)
     ret = result.stdout.decode('utf-8')
     err = result.stderr.decode('utf-8')
     if err:
         raise RuntimeError(f'{ret}:\n {err}')
+<<<<<<< HEAD
     img = Image.open(tmp_file)
     height = img.size[1]
     width = img.size[0]
@@ -70,6 +100,9 @@ def spectrogram(in_file, title, comment, raw=0):
     draw.text((1, height - (h + 1)), comment, fill="white", font=comment_font)
     img.save(f'{in_file}.png')
     os.remove(tmp_file)
+=======
+    return ret
+>>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
 
 
 def extract_detection(file: ParseFileName, detection: Detection):
@@ -82,7 +115,11 @@ def extract_detection(file: ParseFileName, detection: Detection):
     else:
         os.makedirs(new_dir, exist_ok=True)
         extract_safe(file.file_name, new_file, detection.start, detection.stop)
+<<<<<<< HEAD
         spectrogram(new_file, detection.common_name, new_file.replace(os.path.expanduser('~/'), ''), conf['RAW_SPECTROGRAM'])
+=======
+        spectrogram(new_file, detection.common_name, new_file.replace(os.path.expanduser('~/'), ''))
+>>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
     return new_file
 
 
@@ -171,6 +208,7 @@ def bird_weather(file: ParseFileName, detections: [Detection]):
     if conf['BIRDWEATHER_ID'] == "":
         return
     if detections:
+<<<<<<< HEAD
         # try:
         #     data, samplerate = soundfile.read(file.file_name)
         #     buf = io.BytesIO()
@@ -198,6 +236,21 @@ def bird_weather(file: ParseFileName, detections: [Detection]):
         # soundscape_id = sdata['soundscape']['id']
         soundscape_id = 0
 
+=======
+        # POST soundscape to server
+        # Always skip soundscape upload
+        should_skip_soundscape_upload = True
+                                                                                           
+        if should_skip_soundscape_upload:
+            # Skip soundscape upload                                                        
+            soundscape_uploaded = False
+            soundscape_id = 0
+        else:                                                                   
+            # POST soundscape to server
+            # (This code block will be skipped)
+            pass
+            
+>>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
         for detection in detections:
             # POST detection to server
             detection_url = f'https://app.birdweather.com/api/v1/stations/{conf["BIRDWEATHER_ID"]}/detections'
@@ -220,13 +273,21 @@ def bird_weather(file: ParseFileName, detections: [Detection]):
 def luistervink(file: ParseFileName, detections: [Detection]):
     """Posts detections to a Luistervink server"""
     conf = get_settings()
+<<<<<<< HEAD
     if conf.get("LUISTERVINK_SERVER_ADDRESS", "") == "":
+=======
+    if conf["LUISTERVINK_SERVER_ADDRESS"] == "":
+>>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
         log.warning(
             "Luistervink address missing, please add LUISTERVINK_SERVER_ADDRESS to the configuration"
         )
         return
 
+<<<<<<< HEAD
     if conf.get("LUISTERVINK_DEVICE_TOKEN", "") == "":
+=======
+    if conf["LUISTERVINK_DEVICE_TOKEN"] == "":
+>>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
         log.warning(
             "No device token configures, please add LUISTERVINK_DEVICE_TOKEN to the configuration"
         )

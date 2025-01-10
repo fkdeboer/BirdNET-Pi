@@ -63,6 +63,7 @@ ensure_python_package() {
   fi
 }
 
+<<<<<<< HEAD
 # sed -i on /etc/birdnet/birdnet.conf overwites the symbolic link - restore the link
 if ! [ -L /etc/birdnet/birdnet.conf ] ; then
   sudo_with_user cp -f /etc/birdnet/birdnet.conf $HOME/BirdNET-Pi/
@@ -73,6 +74,12 @@ fi
 SRC="APPRISE_NOTIFICATION_BODY='(.*)'$"
 DST='APPRISE_NOTIFICATION_BODY="\1"'
 sed -i --follow-symlinks -E "s/$SRC/$DST/" /etc/birdnet/birdnet.conf
+=======
+# update snippets below
+SRC="APPRISE_NOTIFICATION_BODY='(.*)'$"
+DST='APPRISE_NOTIFICATION_BODY="\1"'
+sed -i -E "s/$SRC/$DST/" /etc/birdnet/birdnet.conf
+>>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
 
 if ! grep -E '^DATA_MODEL_VERSION=' /etc/birdnet/birdnet.conf &>/dev/null;then
     echo "DATA_MODEL_VERSION=1" >> /etc/birdnet/birdnet.conf

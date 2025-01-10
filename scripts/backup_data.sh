@@ -167,7 +167,10 @@ required=("/home/$BIRDNET_USER/BirdNET-Pi/birdnet.conf"
 
 # these may or may not exist
 optional=("/home/$BIRDNET_USER/BirdNET-Pi/apprise.txt"
+<<<<<<< HEAD
 "/home/$BIRDNET_USER/BirdNET-Pi/body.txt"
+=======
+>>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
 "/home/$BIRDNET_USER/BirdNET-Pi/scripts/blacklisted_images.txt"
 "/home/$BIRDNET_USER/BirdNET-Pi/scripts/disk_check_exclude.txt"
 "/home/$BIRDNET_USER/BirdNET-Pi/exclude_species_list.txt"
