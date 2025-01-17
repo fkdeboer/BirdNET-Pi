@@ -60,6 +60,11 @@ BIRDWEATHER_ID=
 LUISTERVINK_SERVER_ADDRESS=https://data.folkertdeboerecology.nl
 LUISTERVINK_DEVICE_TOKEN=
 
+#-----------------------  Web Interface User Password  ------------------------#
+#____________________The variable below sets the 'birdnet'_____________________#
+#___________________user password for the Live Audio Stream,___________________#
+#_________________Tools, System Links, and the Processed files ________________#
+
 ## CADDY_PWD is the plaintext password (that will be hashed) and used to access
 ## certain parts of the web interface
 

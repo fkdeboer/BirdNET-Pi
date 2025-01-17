@@ -195,13 +195,13 @@ def bird_weather(file: ParseFileName, detections: [Detection]):
 def luistervink(file: ParseFileName, detections: [Detection]):
     """Posts detections to a Luistervink server"""
     conf = get_settings()
-    if conf["LUISTERVINK_SERVER_ADDRESS"] == "":
+    if conf.get("LUISTERVINK_SERVER_ADDRESS", "") == "":
         log.warning(
             "Luistervink address missing, please add LUISTERVINK_SERVER_ADDRESS to the configuration"
         )
         return
 
-    if conf["LUISTERVINK_DEVICE_TOKEN"] == "":
+    if conf.get("LUISTERVINK_DEVICE_TOKEN", "") == "":
         log.warning(
             "No device token configures, please add LUISTERVINK_DEVICE_TOKEN to the configuration"
         )

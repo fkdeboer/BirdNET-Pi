@@ -153,6 +153,21 @@ To restore:
 ./scripts/backup_data.sh -a restore -f /mnt/birds/backup-2024-07-09.tar
 ```
 
+## x86_64 support*
+***x86_64 is not supported.** Not officially anyway. It is mainly there for developers or otherwise more Linux savvy people.
+That being said, some pointers:
+- Use Debian 12
+- The user needs passwordless sudo
+- We use a custom TFLite build that needs AVX2 support. So Intel Haswell or newer, not sure what that means for AMD cpu's, let me know if you do.
+- Some people get around the previous point by uninstalling `tflite_runtime` and replacing with `tensorflow` in the `./birdnet` venv. But beware: analysis will be slower, and the older v1 model won't work.
+
+For Proxmox, a user has reported adding this in their `cpu-models.conf`, in order for the custom TFLite build to work.
+```
+cpu-model: BirdNet
+    flags +sse4.1
+    reported-model host
+```
+
 ## Uninstallation
 ```
 /usr/local/bin/uninstall.sh && cd ~ && rm -drf BirdNET-Pi

@@ -496,14 +496,14 @@ function runProcess() {
         <dt>NOTE - by using your BirdWeather ID - you are consenting to sharing your soundscapes and detections with BirdWeather</dt></p>
       </td></tr></table><br>
 	  <table class="settingstable"><tr><td>
-	  <h2>Luistervink</h2>
+	    <h2>Luistervink</h2>
       <label for="luistervink_server_address">Luistervink Address: </label>
       <input name="luistervink_server_address" type="text" value="<?php echo htmlspecialchars($config['LUISTERVINK_SERVER_ADDRESS'] ?? ''); ?>" /><br>
       <label for="luistervink_device_token">Device Token: </label>
       <input name="luistervink_device_token" type="text" value="<?php print($config['LUISTERVINK_DEVICE_TOKEN']);?>" /><br>
          <p>Enter the Luistervink address and device token for integration with the system.</p>
       </td></tr></table><br>
-      <table class="settingstable" style="width:100%"><tr><td>
+    <table class="settingstable" style="width:100%"><tr><td>
       <h2>Notifications</h2>
       <p><a target="_blank" href="https://github.com/caronc/apprise/wiki">Apprise Notifications</a> can be setup and enabled for 90+ notification services. Each service should be on its own line.</p>
       <label for="apprise_input">Apprise Notifications Configuration: </label><br>
