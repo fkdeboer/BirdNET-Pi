@@ -2,8 +2,10 @@ from scripts.utils.reporting import luistervink
 from unittest.mock import patch
 from scripts.utils.helpers import ParseFileName, Detection
 from datetime import datetime as dt
+from zoneinfo import ZoneInfo
 
 
+@patch("scripts.utils.reporting.get_localzone", lambda: ZoneInfo("UTC"))
 @patch("scripts.utils.reporting.requests")
 @patch("scripts.utils.reporting.get_settings")
 def test_luistervink(settings_mock, requests_mock):
@@ -16,7 +18,11 @@ def test_luistervink(settings_mock, requests_mock):
     }
     file = ParseFileName("2024-12-07 18:34:21.file")
     detection = Detection(
-        dt(2024, 12, 7, 18, 34, 21), 5, 8, "Parus major_Great tit", 0.789
+        dt(2024, 12, 7, 18, 34, 21, tzinfo=ZoneInfo("UTC")),
+        5,
+        8,
+        "Parus major_Great tit",
+        0.789,
     )
 
     luistervink(file, [detection])
@@ -24,7 +30,7 @@ def test_luistervink(settings_mock, requests_mock):
     requests_mock.post.assert_called_with(
         "https://data.luistervink.nl/api/detections/",
         json={
-            "timestamp": "2024-12-07 18:34:26",
+            "timestamp": "2024-12-07T18:34:26+00:00",
             "commonName": "Great tit",
             "scientificName": "Parus major",
             "lat": 55.074,
