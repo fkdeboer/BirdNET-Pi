@@ -6,7 +6,7 @@ import os
 import sqlite3
 import subprocess
 from time import sleep
-
+from tzlocal import get_localzone
 import requests
 
 from .helpers import get_settings, ParseFileName, Detection, DB_PATH
@@ -157,22 +157,22 @@ def apprise(file: ParseFileName, detections: [Detection]):
 
 def bird_weather(file: ParseFileName, detections: [Detection]):
     conf = get_settings()
-    if conf['BIRDWEATHER_ID'] == "":
+    if conf["BIRDWEATHER_ID"] == "":
         return
     if detections:
         # POST soundscape to server
         # Always skip soundscape upload
         should_skip_soundscape_upload = True
-                                                                                           
+
         if should_skip_soundscape_upload:
-            # Skip soundscape upload                                                        
+            # Skip soundscape upload
             soundscape_uploaded = False
             soundscape_id = 0
-        else:                                                                   
+        else:
             # POST soundscape to server
             # (This code block will be skipped)
             pass
-            
+
         for detection in detections:
             # POST detection to server
             detection_url = f'https://app.birdweather.com/api/v1/stations/{conf["BIRDWEATHER_ID"]}/detections'
@@ -216,7 +216,7 @@ def luistervink(file: ParseFileName, detections: [Detection]):
 
         for detection in detections:
             data = {
-                "timestamp": detection.datetime.strftime(format="%Y-%m-%d %H:%M:%S"),
+                "timestamp": detection.datetime.astimezone(get_localzone()).isoformat(),
                 "commonName": detection.common_name,
                 "scientificName": detection.scientific_name,
                 "lat": conf["LATITUDE"],
@@ -232,7 +232,9 @@ def luistervink(file: ParseFileName, detections: [Detection]):
                 response = requests.post(
                     detection_url, json=data, params=params, timeout=20
                 )
-                log.info("Detection POST Response Status - %d", response.status_code)
+                log.info(f"Luistervink POST Response Status - {response.status_code}")
+                if response.status_code != 201:
+                    log.warning(f"Error message: {response.text}")
             except BaseException as e:
                 log.error("Cannot POST detection: %s", e)
 
