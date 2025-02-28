@@ -14,7 +14,8 @@ Icon made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from 
 </p>
 
 ## About this fork:
-I've been building on [mcguirepr89's](https://github.com/mcguirepr89/BirdNET-Pi) most excellent work to further update and improve BirdNET-Pi. Maybe someone will find it useful.
+This is a fork of https://github.com/Nachtzuster/BirdNET-Pi which is build on [mcguirepr89's](https://github.com/mcguirepr89/BirdNET-Pi) most excellent work to further update and improve BirdNET-Pi. This fork includes a connection to Luistervink.nl, a Dutch website which aims to (re)connect people with nature by showing the beauty of bird (sounds).
+In the near future it will be possible to connect your home-build birdnetpi setup. Stay tuned!
 
 Changes include:
 
