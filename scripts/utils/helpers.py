@@ -13,6 +13,7 @@ _settings = None
 DB_PATH = os.path.expanduser('~/BirdNET-Pi/scripts/birds.db')
 ANALYZING_NOW = os.path.expanduser('~/BirdSongs/StreamData/analyzing_now.txt')
 FONT_DIR = os.path.expanduser('~/BirdNET-Pi/homepage/static')
+HOME_DIR = os.path.expanduser('~')
 
 
 def get_font():

@@ -1,0 +1,2 @@
+#birdnet
+2-59/10 * * * * $USER /usr/local/bin/luistervink_task_check.sh >/dev/null 2>&1
