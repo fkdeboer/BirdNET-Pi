@@ -63,7 +63,6 @@ ensure_python_package() {
   fi
 }
 
-<<<<<<< HEAD
 # sed -i on /etc/birdnet/birdnet.conf overwites the symbolic link - restore the link
 if ! [ -L /etc/birdnet/birdnet.conf ] ; then
   sudo_with_user cp -f /etc/birdnet/birdnet.conf $HOME/BirdNET-Pi/
@@ -74,12 +73,6 @@ fi
 SRC="APPRISE_NOTIFICATION_BODY='(.*)'$"
 DST='APPRISE_NOTIFICATION_BODY="\1"'
 sed -i --follow-symlinks -E "s/$SRC/$DST/" /etc/birdnet/birdnet.conf
-=======
-# update snippets below
-SRC="APPRISE_NOTIFICATION_BODY='(.*)'$"
-DST='APPRISE_NOTIFICATION_BODY="\1"'
-sed -i -E "s/$SRC/$DST/" /etc/birdnet/birdnet.conf
->>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
 
 if ! grep -E '^DATA_MODEL_VERSION=' /etc/birdnet/birdnet.conf &>/dev/null;then
     echo "DATA_MODEL_VERSION=1" >> /etc/birdnet/birdnet.conf
@@ -242,11 +235,12 @@ if [ -L /usr/local/bin/birdnet_analysis.sh ];then
 fi
 
 # Clean state and update cron if all scripts are not installed
-if [ "$(grep -o "#birdnet" /etc/crontab | wc -l)" -lt 6 ]; then
+if [ "$(grep -o "#birdnet" /etc/crontab | wc -l)" -lt 7 ]; then
   sudo sed -i '/birdnet/,+1d' /etc/crontab
   sed "s/\$USER/$USER/g" "$HOME"/BirdNET-Pi/templates/cleanup.cron >> /etc/crontab
   sed "s/\$USER/$USER/g" "$HOME"/BirdNET-Pi/templates/weekly_report.cron >> /etc/crontab
   sed "s/\$USER/$USER/g" "$HOME"/BirdNET-Pi/templates/automatic_update.cron >> /etc/crontab
+  sed "s/\$USER/$USER/g" "$HOME"/BirdNET-Pi/templates/luistervink.cron >> /etc/crontab
 fi
 
 set +x
