@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -x
 
 # Load configuration
 config_file=/etc/birdnet/birdnet.conf

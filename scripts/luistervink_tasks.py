@@ -47,6 +47,6 @@ class TasksProcessor:
 
 
 if __name__ == "__main__":
-    client = LuistervinkClient(get_settings("birdnet.conf"))
+    client = LuistervinkClient(get_settings())
     processor = TasksProcessor(client)
     processor.process_tasks()

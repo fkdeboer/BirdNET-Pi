@@ -489,13 +489,13 @@ function runProcess() {
 	  <table class="settingstable"><tr><td>
 	    <h2>Luistervink</h2>
       <label for="luistervink_server_address">Luistervink Address: </label>
-      <input name="luistervink_server_address" type="text" value="<?php echo htmlspecialchars($config['LUISTERVINK_SERVER_ADDRESS'] ?? ''); ?>" /><br>
+      <input name="luistervink_server_address" size="35" type="text" value="<?php echo htmlspecialchars($config['LUISTERVINK_SERVER_ADDRESS'] ?? ''); ?>" /><br>
       <label for="luistervink_device_token">Device Token: </label>
-      <input name="luistervink_device_token" type="text" value="<?php print($config['LUISTERVINK_DEVICE_TOKEN']);?>" /><br>
+      <input name="luistervink_device_token" size="65" type="text" value="<?php print($config['LUISTERVINK_DEVICE_TOKEN']);?>" /><br>
       <label for="luistervink_task_processor">Enable task processor: </label>
       <select name="luistervink_task_processor" class="testbtn">
-        <option value="1" <?php if (!empty($config['LUISTERVINK_ENABLE_TASK_PROCESSOR'])) echo 'selected="selected"'; ?>>Enabled</option>
-        <option value="0" <?php if (empty($config['LUISTERVINK_ENABLE_TASK_PROCESSOR'])) echo 'selected="selected"'; ?>>Disabled</option>
+        <option value="true" <?php if (!empty($config['LUISTERVINK_ENABLE_TASK_PROCESSOR'])) echo 'selected="selected"'; ?>>Enabled</option>
+        <option value="false" <?php if (empty($config['LUISTERVINK_ENABLE_TASK_PROCESSOR'])) echo 'selected="selected"'; ?>>Disabled</option>
       </select>
          <p>Enter the Luistervink address and device token for integration with the system.</p>
       </td></tr></table><br>
