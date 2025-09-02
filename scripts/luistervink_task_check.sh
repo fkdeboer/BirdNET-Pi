@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-set -x
 
-# Load configuration
 config_file=/etc/birdnet/birdnet.conf
 if [ -f ${config_file} ];then
     source ${config_file}
