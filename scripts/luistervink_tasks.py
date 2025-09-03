@@ -6,8 +6,10 @@ from utils.helpers import get_settings
 import sys
 
 log = logging.getLogger('task_processor')
+log.setLevel(logging.INFO)
 formatter = logging.Formatter("[%(name)s][%(levelname)s] %(message)s")
 handler = logging.StreamHandler(stream=sys.stdout)
+handler.setLevel(logging.INFO)
 handler.setFormatter(formatter)
 log.addHandler(handler)
 
