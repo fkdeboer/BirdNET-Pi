@@ -11,7 +11,7 @@ fi
 export PYTHON_VIRTUAL_ENV="$HOME/BirdNET-Pi/birdnet/bin/python3"
 
 # Check LUISTERVINK_ENABLE_TASK_PROCESSOR and run Python script if true
-if [[ "${LUISTERVINK_ENABLE_TASK_PROCESSOR,,}" == "true" ]]; then
+if [[ "${LUISTERVINK_ENABLE_TASK_PROCESSOR,,}" == "true" && -n "${LUISTERVINK_DEVICE_TOKEN}" ]]; then
     $PYTHON_VIRTUAL_ENV /usr/local/bin/luistervink_tasks.py
 else
     echo "LUISTERVINK_ENABLE_TASK_PROCESSOR is not enabled, skipping task processing."
