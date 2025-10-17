@@ -8,7 +8,7 @@ import tempfile
 import io
 import soundfile
 from time import sleep
-
+from tzlocal import get_localzone
 import requests
 from PIL import Image, ImageDraw, ImageFont
 
