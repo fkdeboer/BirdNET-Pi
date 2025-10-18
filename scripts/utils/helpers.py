@@ -12,7 +12,6 @@ _settings = None
 
 DB_PATH = os.path.expanduser('~/BirdNET-Pi/scripts/birds.db')
 ANALYZING_NOW = os.path.expanduser('~/BirdSongs/StreamData/analyzing_now.txt')
-<<<<<<< HEAD
 FONT_DIR = os.path.expanduser('~/BirdNET-Pi/homepage/static')
 HOME_DIR = os.path.expanduser('~')
 
@@ -30,8 +29,6 @@ def get_font():
     else:
         ret = {'font.family': 'Roboto Flex', 'path': os.path.join(FONT_DIR, 'RobotoFlex-Regular.ttf')}
     return ret
-=======
->>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
 
 
 class PHPConfigParser(ConfigParser):

@@ -3,11 +3,7 @@
 source /etc/birdnet/birdnet.conf
 trap 'exit 1' SIGINT SIGHUP
 
-<<<<<<< HEAD
 usage() { echo "Usage: $0 [-r <remote name>] [-b <branch name>] [-a]" 1>&2; exit 1; }
-=======
-usage() { echo "Usage: $0 [-r <remote name>] [-b <branch name>]" 1>&2; exit 1; }
->>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
 
 if [ -n "${BIRDNET_USER}" ]; then
   USER=${BIRDNET_USER}
@@ -21,14 +17,9 @@ my_dir=$HOME/BirdNET-Pi/scripts
 # Defaults
 remote="origin"
 branch="main"
-<<<<<<< HEAD
 auto_update=""
 
 while getopts ":r:b:a" o; do
-=======
-
-while getopts ":r:b:" o; do
->>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
   case "${o}" in
     r)
       remote=${OPTARG}
