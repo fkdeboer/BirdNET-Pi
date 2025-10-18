@@ -170,33 +170,40 @@ def bird_weather(file: ParseFileName, detections: [Detection]):
     conf = get_settings()
     if conf["BIRDWEATHER_ID"] == "":
         return
+    
+    # For Luistervink devices sound file upload is disabled by default
+    should_upload = conf.get("BIRDWEATHER_UPLOAD_SOUND", "false").lower() == "true"
+
     if detections:
-        # try:
-        #     data, samplerate = soundfile.read(file.file_name)
-        #     buf = io.BytesIO()
-        #     soundfile.write(buf, data, samplerate, format='FLAC')
-        #     flac_data = buf.getvalue()
-        # except Exception as e:
-        #     log.error("Error during FLAC conversion: %s", e)
-        #     return
 
-        # # POST soundscape to server
-        # soundscape_url = (f'https://app.birdweather.com/api/v1/stations/'
-        #                   f'{conf["BIRDWEATHER_ID"]}/soundscapes?timestamp={file.iso8601}')
+        if should_upload:
+            try:
+                data, samplerate = soundfile.read(file.file_name)
+                buf = io.BytesIO()
+                soundfile.write(buf, data, samplerate, format='FLAC')
+                flac_data = buf.getvalue()
+            except Exception as e:
+                log.error("Error during FLAC conversion: %s", e)
+                return
 
-        # try:
-        #     response = requests.post(url=soundscape_url, data=flac_data, timeout=30,
-        #                              headers={'Content-Type': 'audio/flac'})
-        #     log.info("Soundscape POST Response Status - %d", response.status_code)
-        #     sdata = response.json()
-        # except BaseException as e:
-        #     log.error("Cannot POST soundscape: %s", e)
-        #     return
-        # if not sdata.get('success'):
-        #     log.error(sdata.get('message'))
-        #     return
-        # soundscape_id = sdata['soundscape']['id']
-        soundscape_id = 0
+            # POST soundscape to server
+            soundscape_url = (f'https://app.birdweather.com/api/v1/stations/'
+                            f'{conf["BIRDWEATHER_ID"]}/soundscapes?timestamp={file.iso8601}')
+
+            try:
+                response = requests.post(url=soundscape_url, data=flac_data, timeout=30,
+                                        headers={'Content-Type': 'audio/flac'})
+                log.info("Soundscape POST Response Status - %d", response.status_code)
+                sdata = response.json()
+            except BaseException as e:
+                log.error("Cannot POST soundscape: %s", e)
+                return
+            if not sdata.get('success'):
+                log.error(sdata.get('message'))
+                return
+            soundscape_id = sdata['soundscape']['id']
+        else:
+            soundscape_id = 0
 
         for detection in detections:
             # POST detection to server
