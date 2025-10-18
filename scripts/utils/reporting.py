@@ -1,11 +1,12 @@
 import glob
-import gzip
 import json
 import logging
 import os
 import sqlite3
 import subprocess
 import tempfile
+import io
+import soundfile
 from time import sleep
 from tzlocal import get_localzone
 import requests
@@ -44,12 +45,13 @@ def extract_safe(in_file, out_file, start, stop):
     extract(in_file, out_file, safe_start, safe_stop)
 
 
-def spectrogram(in_file, title, comment, raw=False):
+def spectrogram(in_file, title, comment, raw=0):
     fd, tmp_file = tempfile.mkstemp(suffix='.png')
     os.close(fd)
     args = ['sox', '-V1', f'{in_file}', '-n', 'remix', '1', 'rate', '24k', 'spectrogram',
             '-t', '', '-c', '', '-o', tmp_file]
-    args += ['-r'] if raw else []
+    args += ['-r'] if int(raw) else []
+
     result = subprocess.run(args, check=True, capture_output=True)
     ret = result.stdout.decode('utf-8')
     err = result.stderr.decode('utf-8')
@@ -80,7 +82,7 @@ def extract_detection(file: ParseFileName, detection: Detection):
     else:
         os.makedirs(new_dir, exist_ok=True)
         extract_safe(file.file_name, new_file, detection.start, detection.stop)
-        spectrogram(new_file, detection.common_name, new_file.replace(os.path.expanduser('~/'), ''))
+        spectrogram(new_file, detection.common_name, new_file.replace(os.path.expanduser('~/'), ''), conf['RAW_SPECTROGRAM'])
     return new_file
 
 
@@ -168,19 +170,40 @@ def bird_weather(file: ParseFileName, detections: [Detection]):
     conf = get_settings()
     if conf["BIRDWEATHER_ID"] == "":
         return
-    if detections:
-        # POST soundscape to server
-        # Always skip soundscape upload
-        should_skip_soundscape_upload = True
+    
+    # For Luistervink devices sound file upload is disabled by default
+    should_upload = conf.get("BIRDWEATHER_UPLOAD_SOUND", "false").lower() == "true"
 
-        if should_skip_soundscape_upload:
-            # Skip soundscape upload
-            soundscape_uploaded = False
-            soundscape_id = 0
-        else:
+    if detections:
+
+        if should_upload:
+            try:
+                data, samplerate = soundfile.read(file.file_name)
+                buf = io.BytesIO()
+                soundfile.write(buf, data, samplerate, format='FLAC')
+                flac_data = buf.getvalue()
+            except Exception as e:
+                log.error("Error during FLAC conversion: %s", e)
+                return
+
             # POST soundscape to server
-            # (This code block will be skipped)
-            pass
+            soundscape_url = (f'https://app.birdweather.com/api/v1/stations/'
+                            f'{conf["BIRDWEATHER_ID"]}/soundscapes?timestamp={file.iso8601}')
+
+            try:
+                response = requests.post(url=soundscape_url, data=flac_data, timeout=30,
+                                        headers={'Content-Type': 'audio/flac'})
+                log.info("Soundscape POST Response Status - %d", response.status_code)
+                sdata = response.json()
+            except BaseException as e:
+                log.error("Cannot POST soundscape: %s", e)
+                return
+            if not sdata.get('success'):
+                log.error(sdata.get('message'))
+                return
+            soundscape_id = sdata['soundscape']['id']
+        else:
+            soundscape_id = 0
 
         for detection in detections:
             # POST detection to server

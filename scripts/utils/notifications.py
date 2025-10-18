@@ -9,6 +9,30 @@ import time as timeim
 
 userDir = os.path.expanduser('~')
 APPRISE_CONFIG = userDir + '/BirdNET-Pi/apprise.txt'
+<<<<<<< HEAD
+APPRISE_BODY = userDir + '/BirdNET-Pi/body.txt'
+DB_PATH = userDir + '/BirdNET-Pi/scripts/birds.db'
+
+apobj = None
+images = {}
+species_last_notified = {}
+
+
+def notify(body, title, attached=""):
+    global apobj
+    if apobj is None:
+        asset = apprise.AppriseAsset(
+            plugin_paths=[
+                userDir + "/.apprise/plugins",
+                userDir + "/.config/apprise/plugins",
+            ]
+        )
+        apobj = apprise.Apprise(asset=asset)
+        config = apprise.AppriseConfig()
+        config.add(APPRISE_CONFIG)
+        apobj.add(config)
+
+=======
 DB_PATH = userDir + '/BirdNET-Pi/scripts/birds.db'
 
 flickr_images = {}
@@ -27,6 +51,7 @@ apobj.add(config)
 
 
 def notify(body, title, attached=""):
+>>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
     if attached != "":
         apobj.notify(
             body=body,
@@ -46,6 +71,22 @@ def sendAppriseNotifications(species, confidence, confidencepct, path,
     def render_template(template, reason=""):
         ret = template.replace("$sciname", sciName) \
             .replace("$comname", comName) \
+<<<<<<< HEAD
+            .replace("$confidencepct", str(confidencepct)) \
+            .replace("$confidence", str(confidence)) \
+            .replace("$listenurl", listenurl) \
+            .replace("$friendlyurl", friendlyurl) \
+            .replace("$date", str(date)) \
+            .replace("$time", str(time)) \
+            .replace("$week", str(week)) \
+            .replace("$latitude", str(latitude)) \
+            .replace("$longitude", str(longitude)) \
+            .replace("$cutoff", str(cutoff)) \
+            .replace("$sens", str(sens)) \
+            .replace("$flickrimage", image_url if "{" in body else "") \
+            .replace("$image", image_url if "{" in body else "") \
+            .replace("$overlap", str(overlap)) \
+=======
             .replace("$confidencepct", confidencepct) \
             .replace("$confidence", confidence) \
             .replace("$listenurl", listenurl) \
@@ -59,6 +100,7 @@ def sendAppriseNotifications(species, confidence, confidencepct, path,
             .replace("$sens", sens) \
             .replace("$flickrimage", image_url if "{" in body else "") \
             .replace("$overlap", overlap) \
+>>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
             .replace("$reason", reason)
         return ret
     # print(sendAppriseNotifications)
@@ -66,7 +108,13 @@ def sendAppriseNotifications(species, confidence, confidencepct, path,
     if os.path.exists(APPRISE_CONFIG) and os.path.getsize(APPRISE_CONFIG) > 0:
 
         title = html.unescape(settings_dict.get('APPRISE_NOTIFICATION_TITLE'))
+<<<<<<< HEAD
+        f = open(APPRISE_BODY, 'r')
+        body = f.read()
+
+=======
         body = html.unescape(settings_dict.get('APPRISE_NOTIFICATION_BODY'))
+>>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
         sciName, comName = species.split("_")
 
         APPRISE_ONLY_NOTIFY_SPECIES_NAMES = settings_dict.get('APPRISE_ONLY_NOTIFY_SPECIES_NAMES')
@@ -101,6 +149,17 @@ def sendAppriseNotifications(species, confidence, confidencepct, path,
         friendlyurl = "[Listen here]("+listenurl+")"
         image_url = ""
 
+<<<<<<< HEAD
+        if "$flickrimage" in body or "$image" in body:
+            if comName not in images:
+                try:
+                    url = f"http://localhost/api/v1/image/{sciName}"
+                    resp = requests.get(url=url, timeout=10).json()
+                    images[comName] = resp['data']['image_url']
+                except Exception as e:
+                    print("IMAGE API ERROR: "+str(e))
+            image_url = images.get(comName, "")
+=======
         if len(settings_dict.get('FLICKR_API_KEY')) > 0 and "$flickrimage" in body:
             if comName not in flickr_images:
                 try:
@@ -120,6 +179,7 @@ def sendAppriseNotifications(species, confidence, confidencepct, path,
                     image_url = ""
             else:
                 image_url = flickr_images[comName]
+>>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
 
         if settings_dict.get('APPRISE_NOTIFY_EACH_DETECTION') == "1":
             notify_body = render_template(body, "detection")
@@ -129,6 +189,52 @@ def sendAppriseNotifications(species, confidence, confidencepct, path,
 
         APPRISE_NOTIFICATION_NEW_SPECIES_DAILY_COUNT_LIMIT = 1  # Notifies the first N per day.
         if settings_dict.get('APPRISE_NOTIFY_NEW_SPECIES_EACH_DAY') == "1":
+<<<<<<< HEAD
+            numberDetections = get_todays_count_for(db_path, sciName)
+            if 0 < numberDetections <= APPRISE_NOTIFICATION_NEW_SPECIES_DAILY_COUNT_LIMIT:
+                print("send the notification")
+                notify_body = render_template(body, "first time today")
+                notify_title = render_template(title, "first time today")
+                notify(notify_body, notify_title, image_url)
+                species_last_notified[comName] = int(timeim.time())
+
+        if settings_dict.get('APPRISE_NOTIFY_NEW_SPECIES') == "1":
+            numberDetections = get_this_weeks_count_for(db_path, sciName)
+            if 0 < numberDetections <= 5:
+                reason = f"only seen {numberDetections} times in last 7d"
+                notify_body = render_template(body, reason)
+                notify_title = render_template(title, reason)
+                notify(notify_body, notify_title, image_url)
+                species_last_notified[comName] = int(timeim.time())
+
+
+def get_todays_count_for(db_path, sci_name):
+    today = datetime.now().strftime("%Y-%m-%d")
+    select_sql = f"SELECT COUNT(*) FROM detections WHERE Date = DATE('{today}') AND Sci_name = '{sci_name}'"
+    records = get_records(db_path, select_sql)
+    return records[0][0] if records else 0
+
+
+def get_this_weeks_count_for(db_path, sci_name):
+    today = datetime.now().strftime("%Y-%m-%d")
+    select_sql = f"SELECT COUNT(*) FROM detections WHERE Date >= DATE('{today}', '-7 day') AND Sci_name = '{sci_name}'"
+    records = get_records(db_path, select_sql)
+    return records[0][0] if records else 0
+
+
+def get_records(db_path, select_sql):
+    try:
+        con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+        cur = con.cursor()
+        cur.execute(select_sql)
+        records = cur.fetchall()
+        con.close()
+    except sqlite3.Error:
+        print("Database busy")
+        timeim.sleep(2)
+        records = []
+    return records
+=======
             try:
                 con = sqlite3.connect(db_path)
                 cur = con.cursor()
@@ -172,6 +278,7 @@ def sendAppriseNotifications(species, confidence, confidencepct, path,
             except sqlite3.Error:
                 print("Database busy")
                 timeim.sleep(2)
+>>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
 
 
 if __name__ == "__main__":

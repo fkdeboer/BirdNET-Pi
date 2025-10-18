@@ -3,7 +3,11 @@
 source /etc/birdnet/birdnet.conf
 trap 'exit 1' SIGINT SIGHUP
 
+<<<<<<< HEAD
+usage() { echo "Usage: $0 [-r <remote name>] [-b <branch name>] [-a]" 1>&2; exit 1; }
+=======
 usage() { echo "Usage: $0 [-r <remote name>] [-b <branch name>]" 1>&2; exit 1; }
+>>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
 
 if [ -n "${BIRDNET_USER}" ]; then
   USER=${BIRDNET_USER}
@@ -17,8 +21,14 @@ my_dir=$HOME/BirdNET-Pi/scripts
 # Defaults
 remote="origin"
 branch="main"
+<<<<<<< HEAD
+auto_update=""
+
+while getopts ":r:b:a" o; do
+=======
 
 while getopts ":r:b:" o; do
+>>>>>>> 9ff4069 (Merge pull request #7 from fkdeboer/installer)
   case "${o}" in
     r)
       remote=${OPTARG}
@@ -33,6 +43,9 @@ while getopts ":r:b:" o; do
     b)
       branch=${OPTARG}
       ;;
+    a)
+      auto_update=1
+      ;;
     *)
       usage
       ;;
@@ -45,6 +58,21 @@ sudo_with_user () {
   sudo -u $USER "$@"
   set +x
 }
+
+can_auto_update () {
+  if [ -z ${AUTOMATIC_UPDATE} ] || [ "${AUTOMATIC_UPDATE}" == 0 ]; then
+    echo "Auto update is not enabled"
+    exit 0
+  fi
+  sudo_with_user git -C $HOME/BirdNET-Pi fetch $remote $branch
+  behind_count=$(sudo_with_user git -C $HOME/BirdNET-Pi rev-list --count HEAD..@{u})
+  if [ "${behind_count}" -eq 0 ]; then
+    echo "No updates"
+    exit 0
+  fi
+}
+
+[ -n "${auto_update}" ] && can_auto_update
 
 # Get current HEAD hash
 commit_hash=$(sudo_with_user git -C $HOME/BirdNET-Pi rev-parse HEAD)
