@@ -44,9 +44,9 @@ class DetectionSoundHandler(BaseHandler):
         scientific_name = self.spec.get("scientific_name")
         confidence = self.spec.get("confidence")
 
-        utc_dt = datetime.strptime(
-            self.spec["timestamp"], "%Y-%m-%dT%H:%M:%SZ"
-        ).replace(tzinfo=timezone.utc)
+        utc_dt = datetime.fromisoformat(
+            self.spec["timestamp"].replace("Z", "+00:00")
+        )
         local_tz = utc_dt.astimezone(get_localzone())
 
         date = local_tz.strftime("%Y-%m-%d")
