@@ -21,8 +21,10 @@ class LuistervinkClient:
         self, endpoint: str, data: dict | None = None, files: dict | None = None
     ) -> requests.Response:
         url = f"{self.base_url}/{endpoint}"
-        return requests.post(url, json=data, params=self.params, files=files)
+        return requests.post(
+            url, json=data, params=self.params, files=files, timeout=30
+        )
 
     def put(self, endpoint: str, data: dict | None = None) -> requests.Response:
         url = f"{self.base_url}/{endpoint}"
-        return requests.put(url, json=data, params=self.params)
+        return requests.put(url, json=data, params=self.params, timeout=30)
