@@ -64,6 +64,11 @@ if(isset($_GET["latitude"])){
   $luistervink_device_token = $_GET["luistervink_device_token"]; // New Luistervink ID
   $luistervink_server_address = $_GET["luistervink_server_address"]; // New LUISTERVINK_SERVER_ADDRESS
   $luistervink_task_processor = $_GET["luistervink_task_processor"];
+  $use_gps = isset($_GET["use_gps"]) ? "true" : "false";
+  $gps_timeout = $_GET["gps_timeout"];
+  if (!is_numeric($gps_timeout) || $gps_timeout < 1) {
+    $gps_timeout = 3;
+  }
   $apprise_input = $_GET['apprise_input'];
   $apprise_notification_title = $_GET['apprise_notification_title'];
   $apprise_notification_body = htmlspecialchars_decode($_GET['apprise_notification_body'], ENT_QUOTES);
@@ -145,6 +150,8 @@ if(isset($_GET["latitude"])){
   $contents = preg_replace("/SITE_NAME=.*/", "SITE_NAME=\"$site_name\"", $contents);
   $contents = preg_replace("/LATITUDE=.*/", "LATITUDE=$latitude", $contents);
   $contents = preg_replace("/LONGITUDE=.*/", "LONGITUDE=$longitude", $contents);
+  $contents = preg_replace("/USE_GPS=.*/", "USE_GPS=$use_gps", $contents);
+  $contents = preg_replace("/GPS_TIMEOUT=.*/", "GPS_TIMEOUT=$gps_timeout", $contents);
   $contents = preg_replace("/BIRDWEATHER_ID=.*/", "BIRDWEATHER_ID=$birdweather_id", $contents);
   $contents = preg_replace("/LUISTERVINK_SERVER_ADDRESS=.*/", "LUISTERVINK_SERVER_ADDRESS=$luistervink_server_address", $contents);
   $contents = preg_replace("/LUISTERVINK_DEVICE_TOKEN=.*/", "LUISTERVINK_DEVICE_TOKEN=$luistervink_device_token", $contents);
@@ -435,6 +442,12 @@ function runProcess() {
         </tr>
       </table>
       <p>Set your Latitude and Longitude to 4 decimal places. Get your coordinates <a href="https://latlong.net" target="_blank">here</a>.</p>
+      <hr>
+      <input type="checkbox" name="use_gps" <?php if(isset($config['USE_GPS']) && strtolower($config['USE_GPS']) === 'true') { echo 'checked'; } ?>>
+      <label for="use_gps">Read live GPS coordinates per detection (requires gpsd / gpspipe)</label><br>
+      <label for="gps_timeout">GPS read timeout (seconds): </label>
+      <input name="gps_timeout" type="number" style="width:5em;" min="1" step="1" value="<?php print(isset($config['GPS_TIMEOUT']) ? $config['GPS_TIMEOUT'] : 3); ?>"/>
+      <p>When enabled, each detection batch is tagged with the current GPS fix from <code>gpspipe</code>. If no fix is available within the timeout, the static Latitude/Longitude above is used instead.</p>
       </td></tr></table><br>
       <table class="settingstable"><tr><td>
       <h2>BirdWeather</h2>

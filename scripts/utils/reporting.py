@@ -86,7 +86,7 @@ def extract_detection(file: ParseFileName, detection: Detection):
     return new_file
 
 
-def write_to_db(file: ParseFileName, detection: Detection):
+def write_to_db(file: ParseFileName, detection: Detection, lat: float, lon: float):
     conf = get_settings()
     # Connect to SQLite Database
     for attempt_number in range(3):
@@ -95,7 +95,7 @@ def write_to_db(file: ParseFileName, detection: Detection):
             cur = con.cursor()
             cur.execute("INSERT INTO detections VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                         (detection.date, detection.time, detection.scientific_name, detection.common_name, detection.confidence,
-                         conf['LATITUDE'], conf['LONGITUDE'], conf['CONFIDENCE'], str(detection.week), conf['SENSITIVITY'],
+                         lat, lon, conf['CONFIDENCE'], str(detection.week), conf['SENSITIVITY'],
                          conf['OVERLAP'], os.path.basename(detection.file_name_extr)))
             # (Date, Time, Sci_Name, Com_Name, str(score),
             # Lat, Lon, Cutoff, Week, Sens,
@@ -109,20 +109,20 @@ def write_to_db(file: ParseFileName, detection: Detection):
             sleep(2)
 
 
-def summary(file: ParseFileName, detection: Detection):
+def summary(file: ParseFileName, detection: Detection, lat: float, lon: float):
     # Date;Time;Sci_Name;Com_Name;Confidence;Lat;Lon;Cutoff;Week;Sens;Overlap
     # 2023-03-03;12:48:01;Phleocryptes melanops;Wren-like Rushbird;0.76950216;-1;-1;0.7;9;1.25;0.0
     conf = get_settings()
     s = (f'{detection.date};{detection.time};{detection.scientific_name};{detection.common_name};'
          f'{detection.confidence};'
-         f'{conf["LATITUDE"]};{conf["LONGITUDE"]};{conf["CONFIDENCE"]};{detection.week};{conf["SENSITIVITY"]};'
+         f'{lat};{lon};{conf["CONFIDENCE"]};{detection.week};{conf["SENSITIVITY"]};'
          f'{conf["OVERLAP"]}')
     return s
 
 
-def write_to_file(file: ParseFileName, detection: Detection):
+def write_to_file(file: ParseFileName, detection: Detection, lat: float, lon: float):
     with open(os.path.expanduser('~/BirdNET-Pi/BirdDB.txt'), 'a') as rfile:
-        rfile.write(f'{summary(file, detection)}\n')
+        rfile.write(f'{summary(file, detection, lat, lon)}\n')
 
 
 def update_json_file(file: ParseFileName, detections: [Detection]):
@@ -148,7 +148,7 @@ def write_to_json_file(file: ParseFileName, detections: [Detection]):
     log.debug(f'DONE! WROTE {len(detections)} RESULTS.')
 
 
-def apprise(file: ParseFileName, detections: [Detection]):
+def apprise(file: ParseFileName, detections: [Detection], lat: float, lon: float):
     species_apprised_this_run = []
     conf = get_settings()
 
@@ -158,7 +158,7 @@ def apprise(file: ParseFileName, detections: [Detection]):
             try:
                 sendAppriseNotifications(detection.species, str(detection.confidence), str(detection.confidence_pct),
                                          os.path.basename(detection.file_name_extr), detection.date, detection.time, str(detection.week),
-                                         conf['LATITUDE'], conf['LONGITUDE'], conf['CONFIDENCE'], conf['SENSITIVITY'],
+                                         str(lat), str(lon), conf['CONFIDENCE'], conf['SENSITIVITY'],
                                          conf['OVERLAP'], dict(conf), DB_PATH)
             except BaseException as e:
                 log.exception('Error during Apprise:', exc_info=e)
@@ -166,7 +166,7 @@ def apprise(file: ParseFileName, detections: [Detection]):
             species_apprised_this_run.append(detection.species)
 
 
-def bird_weather(file: ParseFileName, detections: [Detection]):
+def bird_weather(file: ParseFileName, detections: [Detection], lat: float, lon: float):
     conf = get_settings()
     if conf["BIRDWEATHER_ID"] == "":
         return
@@ -209,7 +209,7 @@ def bird_weather(file: ParseFileName, detections: [Detection]):
             # POST detection to server
             detection_url = f'https://app.birdweather.com/api/v1/stations/{conf["BIRDWEATHER_ID"]}/detections'
 
-            data = {'timestamp': detection.iso8601, 'lat': conf['LATITUDE'], 'lon': conf['LONGITUDE'],
+            data = {'timestamp': detection.iso8601, 'lat': lat, 'lon': lon,
                     'soundscapeId': soundscape_id,
                     'soundscapeStartTime': detection.start, 'soundscapeEndTime': detection.stop,
                     'commonName': detection.common_name, 'scientificName': detection.scientific_name,
@@ -224,7 +224,7 @@ def bird_weather(file: ParseFileName, detections: [Detection]):
                 log.error("Cannot POST detection: %s", e)
 
 
-def luistervink(file: ParseFileName, detections: [Detection]):
+def luistervink(file: ParseFileName, detections: [Detection], lat: float, lon: float):
     """Posts detections to a Luistervink server"""
     conf = get_settings()
     if conf.get("LUISTERVINK_SERVER_ADDRESS", "") == "":
@@ -251,8 +251,8 @@ def luistervink(file: ParseFileName, detections: [Detection]):
                 "timestamp": detection.datetime.astimezone(get_localzone()).isoformat(),
                 "commonName": detection.common_name,
                 "scientificName": detection.scientific_name,
-                "lat": conf["LATITUDE"],
-                "lon": conf["LONGITUDE"],
+                "lat": lat,
+                "lon": lon,
                 "confidence": detection.confidence,
                 "soundscapeId": soundscape_id,
                 "soundscapeStartTime": detection.start,

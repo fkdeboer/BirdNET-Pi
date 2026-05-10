@@ -25,7 +25,7 @@ def test_luistervink(settings_mock, requests_mock):
         0.789,
     )
 
-    luistervink(file, [detection])
+    luistervink(file, [detection], 55.074, 4.360)
 
     requests_mock.post.assert_called_with(
         "https://data.luistervink.nl/api/detections/",

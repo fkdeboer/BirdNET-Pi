@@ -12,6 +12,7 @@ import inotify.adapters
 from inotify.constants import IN_CLOSE_WRITE
 
 from server import load_global_model, run_analysis
+from utils.gps_utils import resolve_coordinates
 from utils.helpers import get_settings, ParseFileName, get_wav_files, ANALYZING_NOW
 from utils.reporting import extract_detection, summary, write_to_file, write_to_db, apprise, bird_weather, heartbeat, \
     update_json_file, luistervink
@@ -109,14 +110,15 @@ def handle_reporting_queue(queue):
         file, detections = msg
         try:
             update_json_file(file, detections)
+            lat, lon = resolve_coordinates(get_settings())
             for detection in detections:
                 detection.file_name_extr = extract_detection(file, detection)
-                log.info('%s;%s', summary(file, detection), os.path.basename(detection.file_name_extr))
-                write_to_file(file, detection)
-                write_to_db(file, detection)
-            apprise(file, detections)
-            bird_weather(file, detections)
-            luistervink(file, detections)
+                log.info('%s;%s', summary(file, detection, lat, lon), os.path.basename(detection.file_name_extr))
+                write_to_file(file, detection, lat, lon)
+                write_to_db(file, detection, lat, lon)
+            apprise(file, detections, lat, lon)
+            bird_weather(file, detections, lat, lon)
+            luistervink(file, detections, lat, lon)
             heartbeat()
             os.remove(file.file_name)
         except BaseException as e:
