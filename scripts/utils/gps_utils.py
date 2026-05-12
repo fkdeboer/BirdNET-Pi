@@ -28,7 +28,7 @@ def _read_from_gpspipe(timeout: float) -> tuple[float, float] | None:
         lat = sentence.get('lat')
         lon = sentence.get('lon')
         if lat is not None and lon is not None:
-            return float(lat), float(lon)
+            return round(float(lat), 6), round(float(lon), 6)
     return None
 
 
