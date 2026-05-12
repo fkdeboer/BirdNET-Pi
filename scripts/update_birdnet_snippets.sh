@@ -127,6 +127,14 @@ if ! grep -E '^LUISTERVINK_SERVER_ADDRESS=' /etc/birdnet/birdnet.conf &>/dev/nul
   echo "LUISTERVINK_DEVICE_TOKEN=" >> /etc/birdnet/birdnet.conf
 fi
 
+if ! grep -E '^USE_GPS=' /etc/birdnet/birdnet.conf &>/dev/null;then
+  echo "USE_GPS=false" >> /etc/birdnet/birdnet.conf
+fi
+
+if ! grep -E '^GPS_TIMEOUT=' /etc/birdnet/birdnet.conf &>/dev/null;then
+  echo "GPS_TIMEOUT=3" >> /etc/birdnet/birdnet.conf
+fi
+
 if ! grep -E '^RARE_SPECIES_THRESHOLD=' /etc/birdnet/birdnet.conf &>/dev/null;then
   echo '## RARE_SPECIES_THRESHOLD defines after how many days a species is considered as rare and highlighted on overview page' >> /etc/birdnet/birdnet.conf
   echo "RARE_SPECIES_THRESHOLD=\"30\"" >> /etc/birdnet/birdnet.conf

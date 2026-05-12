@@ -38,6 +38,15 @@ SITE_NAME="$HOSTNAME"
 LATITUDE=$LATITUDE
 LONGITUDE=$LONGITUDE
 
+## If USE_GPS is true, BirdNET-Pi will read live coordinates from gpspipe
+## (gpsd) once per detection batch and store those with each detection.
+## On any failure (no fix, gpspipe missing, timeout) it falls back to the
+## static LATITUDE/LONGITUDE above.
+USE_GPS=false
+
+## Maximum seconds to wait for a GPS fix from gpspipe before falling back.
+GPS_TIMEOUT=3
+
 #--------------------------------- Model --------------------------------------#
 #_____________The variable below configures which BirdNET model is_____________#
 #______________________used for detecting bird audio.__________________________#
