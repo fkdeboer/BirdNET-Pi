@@ -443,7 +443,7 @@ function runProcess() {
       </table>
       <p>Set your Latitude and Longitude to 4 decimal places. Get your coordinates <a href="https://latlong.net" target="_blank">here</a>.</p>
       <hr>
-      <input type="checkbox" name="use_gps" <?php if(isset($config['USE_GPS']) && strtolower($config['USE_GPS']) === 'true') { echo 'checked'; } ?>>
+      <input type="checkbox" name="use_gps" <?php if(!empty($config['USE_GPS'])) { echo 'checked'; } ?>>
       <label for="use_gps">Read live GPS coordinates per detection (requires gpsd / gpspipe)</label><br>
       <label for="gps_timeout">GPS read timeout (seconds): </label>
       <input name="gps_timeout" type="number" style="width:5em;" min="1" step="1" value="<?php print(isset($config['GPS_TIMEOUT']) ? $config['GPS_TIMEOUT'] : 3); ?>"/>
