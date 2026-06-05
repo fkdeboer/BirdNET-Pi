@@ -77,7 +77,7 @@ class DetectionSoundHandler(BaseHandler):
 
     def _handle_no_sound(self, status: str) -> None:
         """Handle cases where no detection sound is found."""
-        url = f"/api/detections/{self.spec['id']}"
+        url = f"detections/{self.spec['id']}"
         response = self.client.put(url, data={"sound_reference": status})
         if response.status_code != 200:
             log.error(
@@ -88,7 +88,7 @@ class DetectionSoundHandler(BaseHandler):
         """Handle the case where a sound file is found."""
         with open(filepath, "rb") as f:
             files = {"sound": (os.path.basename(filepath), f, "audio/mpeg")}
-            url = f"/api/detections/{self.spec['id']}/sound/"
+            url = f"detections/{self.spec['id']}/sound/"
             response = self.client.post(url, files=files)
 
         if response.status_code != 201:
@@ -198,7 +198,7 @@ class ReloadDetectionsHandler(BaseHandler):
             }
 
             try:
-                response = self.client.post("/api/detections/", data=data)
+                response = self.client.post("detections/", data=data)
                 log.info(f"Luistervink POST Response Status - {response.status_code}")
                 if response.status_code == 201:
                     self.result.uploaded += 1
@@ -224,7 +224,7 @@ class ReloadDetectionsHandler(BaseHandler):
             time.sleep(0.2)  # avoid overwhelming the server
 
     def _post_results(self, status: str) -> None:
-        url = f"/api/tasks/{self.task_id}"
+        url = f"tasks/{self.task_id}"
         data = {"status": status, "results": self.result.to_json()}
         response = self.client.put(url, data=data)
         if response.status_code != 200:
