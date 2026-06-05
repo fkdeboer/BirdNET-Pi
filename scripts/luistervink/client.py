@@ -13,18 +13,20 @@ class LuistervinkClient:
         self.params = {"token": conf.get("LUISTERVINK_DEVICE_TOKEN")}
         self.session = requests.Session()
 
+    def _url(self, endpoint: str) -> str:
+        return f"{self.base_url.rstrip('/')}/api/{endpoint.lstrip('/')}"
+
     def get(self, endpoint: str) -> requests.Response:
-        url = f"{self.base_url}/api/{endpoint}"
-        return requests.get(url, params=self.params)
+        return requests.get(self._url(endpoint), params=self.params)
 
     def post(
         self, endpoint: str, data: dict | None = None, files: dict | None = None
     ) -> requests.Response:
-        url = f"{self.base_url}/{endpoint}"
         return requests.post(
-            url, json=data, params=self.params, files=files, timeout=30
+            self._url(endpoint), json=data, params=self.params, files=files, timeout=30
         )
 
     def put(self, endpoint: str, data: dict | None = None) -> requests.Response:
-        url = f"{self.base_url}/{endpoint}"
-        return requests.put(url, json=data, params=self.params, timeout=30)
+        return requests.put(
+            self._url(endpoint), json=data, params=self.params, timeout=30
+        )
