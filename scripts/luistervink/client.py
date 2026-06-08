@@ -1,5 +1,7 @@
 import requests
 import logging
+from typing import Optional
+
 
 log = logging.getLogger(__name__)
 
@@ -20,13 +22,13 @@ class LuistervinkClient:
         return requests.get(self._url(endpoint), params=self.params)
 
     def post(
-        self, endpoint: str, data: dict | None = None, files: dict | None = None
+        self, endpoint: str, data: Optional[dict] = None, files: Optional[dict] = None
     ) -> requests.Response:
         return requests.post(
             self._url(endpoint), json=data, params=self.params, files=files, timeout=30
         )
 
-    def put(self, endpoint: str, data: dict | None = None) -> requests.Response:
+    def put(self, endpoint: str, data: Optional[dict] = None) -> requests.Response:
         return requests.put(
             self._url(endpoint), json=data, params=self.params, timeout=30
         )

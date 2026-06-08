@@ -2,11 +2,12 @@ import json
 import logging
 import subprocess
 import threading
+from typing import Optional
 
 log = logging.getLogger(__name__)
 
 
-def _read_from_gpspipe(timeout: float) -> tuple[float, float] | None:
+def _read_from_gpspipe(timeout: float) -> Optional[tuple[float, float]]:
     """Reads streaming JSON from gpspipe, returns on first valid TPV."""
     proc = subprocess.Popen(
         ['gpspipe', '-w'],
